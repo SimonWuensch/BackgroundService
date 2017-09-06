@@ -7,11 +7,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import java.util.Date;
+
+import sim.ssn.com.servicealarmclockapp.model.FormatHelper;
+import sim.ssn.com.servicealarmclockapp.model.TestDB;
+
 public class TestIntentService extends IntentService {
     private static final String ACTION = "sim.ssn.com.servicealarmclockapp.action.FOO";
 
     private static final String EXTRA_PARAM1 = "sim.ssn.com.servicealarmclockapp.extra.PARAM1";
     private static final String EXTRA_PARAM2 = "sim.ssn.com.servicealarmclockapp.extra.PARAM2";
+
+    private TestDB testDB;
 
     public TestIntentService() {
         super("TestIntentService");
@@ -50,18 +57,25 @@ public class TestIntentService extends IntentService {
     }
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        testDB = new TestDB(this);
+    }
+
+    @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(this.getClass().getSimpleName(), "Handle Intent");
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION.equals(action)) {
                 doIT();
-                startRepeating(this, 5000);
+                startRepeating(this, 600000);
             }
         }
     }
 
     private void doIT() {
         Log.d(this.getClass().getSimpleName(), "do something");
+        testDB.add(FormatHelper.formatDate(new Date()));
     }
 }
